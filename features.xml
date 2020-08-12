@@ -1,0 +1,30 @@
+<p>
+	1. Employee Login
+	2. Employee Sign up
+	3. Employee sign out
+	4. Add product (CEO or Manager)
+	5. Update product (CEO or Manager)
+	6. Delete product (CEO or Manager)
+	7. View all products
+	8. View some products
+	9. Customer sign up
+	10. Customer sign in
+	11. Update customer
+	12. Delete customer
+	13. Customer sign out
+	14. Customer transaction details; list of transaction with total amount and amount paid 
+	15. Add product for purchase
+	16. Remove product from items to purchase
+	17. Update product from item to purchase
+	18. Checkout or conclude a transaction
+	19. Print transaction receipt
+	20. Remove all products from items to purchase
+	21. Create CEO
+	22. Delete CEO
+	23. Update CEO
+	24. As a CEO, I want to monitor all the activities of the employees
+	25. Get the debt of a customer
+	26. Get specific debt of a transaction for a person
+	
+	 
+</p>
