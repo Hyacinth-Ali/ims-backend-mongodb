@@ -1,90 +1,89 @@
 package com.ali.hyacinth.ims.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
 
-@Entity(name="addresses")
-public class Address implements Serializable{
-   private long id;
-   public void setId (long value) 
-   {
-      this.id = value;
-   	}
-   @Id
-   @GeneratedValue
-   public long getId () 
-   {
-      return this.id;
-   	}
-   private String addressId;
-   
-   public void setAddressId(String value) {
-    this.addressId = value;
-    }
-@Column( nullable=false, length=30 ) 
-public String getAddressId() {
-    return this.addressId;
-    }
-private String city;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-public void setCity(String value) {
-    this.city = value;
-    }
-@Column( nullable=false, length=30 ) 
-public String getCity() {
-    return this.city;
-    }
-private String country;
+@Document(collection = "addresses")
+public class Address implements Serializable {
+	@Id
+	private long id;
+	private String addressId;
+	private String city;
+	private String country;
+	private String streetName;
+	private String postalCode;
+	private String type;
+	private Employee employee;
+	private static final long serialVersionUID = -5606520411628590064L;
 
-public void setCountry(String value) {
-    this.country = value;
-    }
-@Column( nullable=false, length=30 ) 
-public String getCountry() {
-    return this.country;
-    }
-private String streetName;
+	public long getId() {
+		return id;
+	}
 
-public void setStreetName(String value) {
-    this.streetName = value;
-    }
-@Column( nullable=false, length=100 ) 
-public String getStreetName() {
-    return this.streetName;
-    }
-private String postalCode;
+	public void setId(long id) {
+		this.id = id;
+	}
 
-public void setPostalCode(String value) {
-    this.postalCode = value;
-    }
-@Column( nullable=false, length=7 ) 
-public String getPostalCode() {
-    return this.postalCode;
-    }
-private String type;
+	public String getAddressId() {
+		return addressId;
+	}
 
-public void setType(String value) {
-    this.type = value;
-    }
-@Column( nullable=false, length=10 ) 
-public String getType() {
-    return this.type;
-       }
-   private Employee employee;
-   
-   @ManyToOne(optional=false)
-   public Employee getEmployee() {
-      return this.employee;
-   }
-   
-   public void setEmployee(Employee employee) {
-      this.employee = employee;
-   }
-   
-   private static final long serialVersionUID = -5606520411628590064L;
-   }
+	public void setAddressId(String addressId) {
+		this.addressId = addressId;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getStreetName() {
+		return streetName;
+	}
+
+	public void setStreetName(String streetName) {
+		this.streetName = streetName;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+}

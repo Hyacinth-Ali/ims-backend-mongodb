@@ -1,129 +1,100 @@
 package com.ali.hyacinth.ims.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.OneToMany;
 
-@Entity
-@Table(name = "transactions")
-public class Transaction implements Serializable {
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "transactions")
+public class Transaction {
 	private boolean editable;
-
-	public void setEditable(boolean value) {
-		this.editable = value;
-	}
+	private double totalAmount;
+	private double amountPaid;
+	private Employee seller;
+	private Customer buyer;
+	private List<ProductTransaction> productTransactions;
+	private double amountUnpaid;
+	private String transactionDate;
+	private long id;
+	private String transactionId;
 
 	public boolean isEditable() {
-		return this.editable;
+		return editable;
 	}
 
-	private double totalAmount;
-
-	public void setTotalAmount(double value) {
-		this.totalAmount = value;
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 
-	@Column(nullable = false, unique = false)
 	public double getTotalAmount() {
-		return this.totalAmount;
+		return totalAmount;
 	}
 
-	private double amountPaid;
-
-	public void setAmountPaid(double value) {
-		this.amountPaid = value;
+	public void setTotalAmount(double totalAmount) {
+		this.totalAmount = totalAmount;
 	}
 
-	@Column(nullable = false)
 	public double getAmountPaid() {
-		return this.amountPaid;
+		return amountPaid;
 	}
 
-	private Employee seller;
+	public void setAmountPaid(double amountPaid) {
+		this.amountPaid = amountPaid;
+	}
 
-	@ManyToOne(optional = false)
 	public Employee getSeller() {
-		return this.seller;
+		return seller;
 	}
 
 	public void setSeller(Employee seller) {
 		this.seller = seller;
 	}
 
-	private Customer buyer;
-
-	@ManyToOne(optional = false)
 	public Customer getBuyer() {
-		return this.buyer;
+		return buyer;
 	}
 
 	public void setBuyer(Customer buyer) {
 		this.buyer = buyer;
 	}
 
-	private List<ProductTransaction> productTransactions;
-
-	@OneToMany(mappedBy = "transaction", cascade = { CascadeType.ALL })
 	public List<ProductTransaction> getProductTransactions() {
-		return this.productTransactions;
+		return productTransactions;
 	}
 
-	public void setProductTransactions(List<ProductTransaction> productTransactionss) {
-		this.productTransactions = productTransactionss;
+	public void setProductTransactions(List<ProductTransaction> productTransactions) {
+		this.productTransactions = productTransactions;
 	}
 
-	private double amountUnpaid;
+	public double getAmountUnpaid() {
+		return amountUnpaid;
+	}
 
 	public void setAmountUnpaid(double amountUnpaid) {
 		this.amountUnpaid = amountUnpaid;
 	}
 
-	@Column(nullable = true)
-	public double getAmountUnpaid() {
-		amountUnpaid = this.totalAmount - this.amountPaid;
-		return amountUnpaid;
-	}
-
-	private String transactionDate;
-
-	public void setTransactionDate(String value) {
-		this.transactionDate = value;
-	}
-
-	@Column(nullable = true)
 	public String getTransactionDate() {
-		return this.transactionDate;
+		return transactionDate;
 	}
 
-	private long id;
-
-	public void setId(long value) {
-		this.id = value;
+	public void setTransactionDate(String transactionDate) {
+		this.transactionDate = transactionDate;
 	}
 
-	@Id
-	@GeneratedValue
 	public long getId() {
-		return this.id;
+		return id;
 	}
 
-	private String transactionId;
-
-	public void setTransactionId(String value) {
-		this.transactionId = value;
+	public void setId(long id) {
+		this.id = id;
 	}
 
-	@Column(unique = true, nullable = false)
 	public String getTransactionId() {
-		return this.transactionId;
+		return transactionId;
 	}
 
-	private static final long serialVersionUID = -8943418603226944904L;
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+
 }
