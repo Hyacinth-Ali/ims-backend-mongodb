@@ -1,15 +1,17 @@
 package com.ali.hyacinth.ims.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
+@Document(collection="ceo")
 public class CEO  {
 	@Id
 	private long id;
 	private String password;
 	private String firstName;
 	private String lastName;
+	@Indexed(unique = true)
 	private String email;
 	private String encryptedPassword;
 	private String ceoId;

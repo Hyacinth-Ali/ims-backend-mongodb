@@ -3,6 +3,7 @@ package com.ali.hyacinth.ims.model;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,9 +13,12 @@ public class Employee {
 	private long id;
 	private String password;
 	private boolean manager;
+	@Indexed(unique = true)
 	private String firstName;
 	private String lastName;
+	@Indexed(unique = true)
 	private String email;
+	@Indexed(unique = true)
 	private String userName;
 	private String encryptedPassword;
 	private String employeeId;

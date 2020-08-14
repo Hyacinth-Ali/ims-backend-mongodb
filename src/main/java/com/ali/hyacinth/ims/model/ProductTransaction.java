@@ -1,16 +1,18 @@
 package com.ali.hyacinth.ims.model;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "ProductTransaction")
+@Document(collection = "productTransactions")
 public class ProductTransaction {
+	@Id
+	private long id;
 	private double price;
 	@DBRef
 	private Product product;
 	@DBRef
 	private Transaction transaction;
-	private long id;
 	private String pTransactionId;
 	private int quantity;
 	public double getPrice() {

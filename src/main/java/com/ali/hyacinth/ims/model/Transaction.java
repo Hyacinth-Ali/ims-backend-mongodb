@@ -2,11 +2,14 @@ package com.ali.hyacinth.ims.model;
 
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "transactions")
 public class Transaction {
+	@Id
+	private long id;
 	private boolean editable;
 	private double totalAmount;
 	private double amountPaid;
@@ -18,9 +21,7 @@ public class Transaction {
 	private List<ProductTransaction> productTransactions;
 	private double amountUnpaid;
 	private String transactionDate;
-	private long id;
 	private String transactionId;
-
 	public boolean isEditable() {
 		return editable;
 	}
