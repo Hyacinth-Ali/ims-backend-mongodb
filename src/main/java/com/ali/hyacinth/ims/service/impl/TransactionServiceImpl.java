@@ -178,8 +178,10 @@ public class TransactionServiceImpl implements TransactionService {
 		productTransaction.setTransaction(currentTransaction);
 		
 		product.setQuantity(product.getQuantity() - quantity);
-		Set<ProductTransaction> pts = new HashSet<ProductTransaction>();
-		pts = product.getProductTransactions();
+		Set<ProductTransaction> pts = product.getProductTransactions();
+		if (pts == null) {
+			pts = new HashSet<ProductTransaction>();
+		}
 		pts.add(productTransaction);
 		product.setProductTransactions(pts);
 		

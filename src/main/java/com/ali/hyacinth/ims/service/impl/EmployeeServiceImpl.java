@@ -64,11 +64,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 		
 		Employee employee = modelMapper.map(employeeDTO, Employee.class);
 		
-		//employee.setManager(false);
+		employee.setManager(true);
 		String publicUserId = utils.generateEmployeeId(30);
 		employee.setEmployeeId(publicUserId);
 		employee.setEncryptedPassword("testpassword");
-		employee.setManager(false);
 		
 		try {
 			employeeRepository.save(employee);
