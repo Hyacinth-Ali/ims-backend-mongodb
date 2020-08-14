@@ -2,6 +2,7 @@ package com.ali.hyacinth.ims.model;
 
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "transactions")
@@ -9,8 +10,11 @@ public class Transaction {
 	private boolean editable;
 	private double totalAmount;
 	private double amountPaid;
+	@DBRef
 	private Employee seller;
+	@DBRef
 	private Customer buyer;
+	@DBRef
 	private List<ProductTransaction> productTransactions;
 	private double amountUnpaid;
 	private String transactionDate;

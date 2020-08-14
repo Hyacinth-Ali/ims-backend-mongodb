@@ -2,6 +2,7 @@ package com.ali.hyacinth.ims.model;
 
 import java.util.Set;
 
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "customers")
@@ -12,6 +13,7 @@ public class Customer {
 	private String lastName;
 	private long id;
 	private String userName;
+	@DBRef
 	private Set<Transaction> purchases;
 	private String customerId;
 

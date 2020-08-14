@@ -3,6 +3,7 @@ package com.ali.hyacinth.ims.model;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "employees")
@@ -17,7 +18,13 @@ public class Employee {
 	private String userName;
 	private String encryptedPassword;
 	private String employeeId;
+	// this takes a number of parameters.
+	//@DBRef(db = <name_of_external_databse>)
+	//@DBRef(lazy = false>) is default. This means that the referenced is loaded 
+	//when referencing object is retrieved from database
+	@DBRef()
 	private Set<Transaction> sales;
+	@DBRef
 	private Set<Address> addresss;
 
 	public long getId() {

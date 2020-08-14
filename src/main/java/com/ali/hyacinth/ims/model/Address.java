@@ -1,6 +1,7 @@
 package com.ali.hyacinth.ims.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "addresses")
@@ -13,6 +14,7 @@ public class Address {
 	private String streetName;
 	private String postalCode;
 	private String type;
+	@DBRef
 	private Employee employee;
 
 	public long getId() {
