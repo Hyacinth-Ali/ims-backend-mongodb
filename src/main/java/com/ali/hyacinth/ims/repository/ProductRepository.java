@@ -1,12 +1,11 @@
 package com.ali.hyacinth.ims.repository;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.ali.hyacinth.ims.model.Product;
 
-@Repository
-public interface ProductRepository extends PagingAndSortingRepository<Product, Long> {
+
+public interface ProductRepository extends MongoRepository<Product, Long> {
 	
 	Product findByName(String name);
 	//Product findByProductTransaction(ProductTransaction pTransaction);

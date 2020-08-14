@@ -1,12 +1,10 @@
 package com.ali.hyacinth.ims.model;
 
-import java.io.Serializable;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class CEO implements Serializable {
+public class CEO  {
 	@Id
 	private long id;
 	private String password;
@@ -15,8 +13,6 @@ public class CEO implements Serializable {
 	private String email;
 	private String encryptedPassword;
 	private String ceoId;
-
-	private static final long serialVersionUID = -1343071302787757901L;
 
 	public long getId() {
 		return id;

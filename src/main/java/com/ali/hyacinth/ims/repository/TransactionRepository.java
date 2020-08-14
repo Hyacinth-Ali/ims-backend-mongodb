@@ -2,15 +2,13 @@ package com.ali.hyacinth.ims.repository;
 
 import java.util.List;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.ali.hyacinth.ims.model.Customer;
-import com.ali.hyacinth.ims.model.Product;
 import com.ali.hyacinth.ims.model.Transaction;
 
-@Repository
-public interface TransactionRepository extends PagingAndSortingRepository<Transaction, Long> {
+
+public interface TransactionRepository extends MongoRepository<Transaction, Long> {
 	
 	List<Transaction> findAllByBuyer(Customer buyer);
 	//List<Transaction> findAllByCustomer(Customer customer);

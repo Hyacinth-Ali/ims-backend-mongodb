@@ -1,12 +1,11 @@
 package com.ali.hyacinth.ims.repository;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.ali.hyacinth.ims.model.Employee;
 
-@Repository
-public interface EmployeeRepository extends PagingAndSortingRepository<Employee, Long> {
+
+public interface EmployeeRepository extends MongoRepository<Employee, Long> {
 	Employee findByEmail(String email);
 	Employee findByUserName(String employeeUserName);
 	Employee findByEmployeeId(String employeeId);

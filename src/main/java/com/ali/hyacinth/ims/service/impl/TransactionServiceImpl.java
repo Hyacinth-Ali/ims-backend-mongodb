@@ -174,7 +174,7 @@ public class TransactionServiceImpl implements TransactionService {
 		productTransaction.setQuantity(quantity);
 		productTransaction.setPrice(quantity * product.getItemPrice());
 		String publicpTransactionId = utils.generateEmployeeId(30);
-		productTransaction.setPTransactionId(publicpTransactionId);
+		productTransaction.setpTransactionId(publicpTransactionId);
 		productTransaction.setTransaction(currentTransaction);
 		
 		product.setQuantity(product.getQuantity() - quantity);

@@ -1,12 +1,10 @@
 package com.ali.hyacinth.ims.model;
 
-import java.io.Serializable;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "addresses")
-public class Address implements Serializable {
+public class Address {
 	@Id
 	private long id;
 	private String addressId;
@@ -16,7 +14,6 @@ public class Address implements Serializable {
 	private String postalCode;
 	private String type;
 	private Employee employee;
-	private static final long serialVersionUID = -5606520411628590064L;
 
 	public long getId() {
 		return id;
@@ -80,10 +77,6 @@ public class Address implements Serializable {
 
 	public void setEmployee(Employee employee) {
 		this.employee = employee;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 }

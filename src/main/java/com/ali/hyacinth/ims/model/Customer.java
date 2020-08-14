@@ -1,12 +1,11 @@
 package com.ali.hyacinth.ims.model;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "customers")
-public class Customer implements Serializable {
+public class Customer {
 
 	private String phoneNumber;
 	private String firstName;
@@ -16,7 +15,6 @@ public class Customer implements Serializable {
 	private Set<Transaction> purchases;
 	private String customerId;
 
-	private static final long serialVersionUID = 1642219633693293123L;
 
 	public String getPhoneNumber() {
 		return phoneNumber;
