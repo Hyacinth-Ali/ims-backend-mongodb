@@ -2,7 +2,6 @@ package com.ali.hyacinth.ims.shared.dto;
 
 public class AddressDTO {
 
-	private long id;
 	private String addressId;
 	private String city;
 	private String country;
@@ -11,13 +10,6 @@ public class AddressDTO {
 	private String type;
 	private EmployeeDTO userDetails;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public String getCity() {
 		return city;

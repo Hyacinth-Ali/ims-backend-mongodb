@@ -10,15 +10,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "customers")
 public class Customer {
 
-	@Id
-	private long id;
 	private String phoneNumber;
 	private String firstName;
 	private String lastName;
+	//TODO: This doesn't work.
 	@Indexed(unique = true)
 	private String userName;
 	@DBRef
 	private Set<Transaction> purchases;
+	@Id
 	private String customerId;
 
 
@@ -44,14 +44,6 @@ public class Customer {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	public String getUserName() {

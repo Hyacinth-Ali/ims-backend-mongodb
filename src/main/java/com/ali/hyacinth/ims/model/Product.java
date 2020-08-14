@@ -3,16 +3,17 @@ package com.ali.hyacinth.ims.model;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "products")
 public class Product {
-	@Id
-	private long id;
 	private double itemPrice;
 	private int quantity;
+	@Indexed(unique = true)
 	private String name;
+	@Id
 	private String productId;
 	@DBRef
 	private Set<ProductTransaction> productTransactions;
@@ -31,14 +32,6 @@ public class Product {
 
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	public String getName() {

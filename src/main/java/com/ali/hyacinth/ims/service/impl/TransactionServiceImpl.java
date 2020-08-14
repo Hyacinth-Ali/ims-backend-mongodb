@@ -333,6 +333,7 @@ public class TransactionServiceImpl implements TransactionService {
 			for (ProductTransaction productTransaction : productTransactionRepository.findAllByTransaction(transaction)) {
 				Product p = productTransaction.getProduct();
 				p.setQuantity(p.getQuantity() + productTransaction.getQuantity());
+				p.getProductTransactions().remove(productTransaction);
 				productRepository.save(p);
 			}
 			
@@ -340,6 +341,10 @@ public class TransactionServiceImpl implements TransactionService {
 			throw new InvalidInputException(e.getMessage());
 		}
 		
+		List<ProductTransaction> containedPTransactions = transaction.getProductTransactions();
+		if (containedPTransactions != null) {
+			productTransactionRepository.deleteAll(containedPTransactions);
+		}
 		transactionRepository.delete(transaction);
 
 	}
@@ -411,8 +416,11 @@ public class TransactionServiceImpl implements TransactionService {
 		
 		ProductTransaction pTransaction = null;
 		List<ProductTransaction> pTransactions = productTransactionRepository.findAllByProduct(product);
+		List<ProductTransaction> existingPTransactions = transaction.getProductTransactions();
 		for (ProductTransaction pt : pTransactions) {
-			if (transaction.getProductTransactions().contains(pt)) {
+			System.out.println(pt.hashCode());
+			System.out.println(existingPTransactions.get(0).hashCode());
+			if (existingPTransactions.contains(pt)) {
 				 pTransaction = pt;
 				 break;
 			}
@@ -433,6 +441,12 @@ public class TransactionServiceImpl implements TransactionService {
 		setTransactionTotalAmount(transactionId);
 		try {
 			transactionRepository.save(transaction);
+		} catch (Exception e) {
+			throw new InvalidInputException("Error!, The transaction was not saved.");
+		}
+		
+		try {
+			productTransactionRepository.save(pTransaction);
 		} catch (Exception e) {
 			throw new InvalidInputException("Error!, The transaction was not saved.");
 		}
@@ -529,6 +543,7 @@ public class TransactionServiceImpl implements TransactionService {
 		int quantity = deletetPTranaction.getQuantity();
 		product.setQuantity(product.getQuantity() + quantity);
 		transaction.getProductTransactions().remove(deletetPTranaction);
+		product.getProductTransactions().remove(deletetPTranaction);
 		productTransactionRepository.delete(deletetPTranaction);
 		setTransactionTotalAmount(transactionId);
 		

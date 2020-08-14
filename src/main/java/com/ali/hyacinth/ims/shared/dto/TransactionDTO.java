@@ -7,8 +7,6 @@ public class TransactionDTO {
 	private double amountUnpaid;
 	private String date;
 	private String transactionId;
-	//private long id;
-	
 	public double getTotalAmount() {
 		return totalAmount;
 	}

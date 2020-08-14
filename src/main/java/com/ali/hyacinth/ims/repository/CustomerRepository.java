@@ -1,10 +1,12 @@
 package com.ali.hyacinth.ims.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import com.ali.hyacinth.ims.model.Customer;
 
-public interface CustomerRepository extends MongoRepository<Customer, Long> {
+@Repository
+public interface CustomerRepository extends MongoRepository<Customer, String> {
 	
 	Customer findByUserName(String userName);
 

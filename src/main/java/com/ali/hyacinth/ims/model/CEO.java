@@ -6,24 +6,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="ceo")
 public class CEO  {
-	@Id
-	private long id;
+	
 	private String password;
 	private String firstName;
 	private String lastName;
 	@Indexed(unique = true)
 	private String email;
 	private String encryptedPassword;
+	@Id
 	private String ceoId;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
+	
 	public String getPassword() {
 		return password;
 	}

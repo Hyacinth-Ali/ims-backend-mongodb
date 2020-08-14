@@ -63,7 +63,7 @@ class TransactionServiceTest {
 		
 		employee = new Employee();
 		employee.setPassword("ali123");
-		employee.setId(1L);
+		//employee.setId(1L);
 		employee.setManager(true);
 		employee.setFirstName("Jason");
 		employee.setLastName("Chijioke");
@@ -74,7 +74,7 @@ class TransactionServiceTest {
 		customer = new Customer();
 		customer.setFirstName("Emeka");
 		customer.setLastName("Oyiga");
-		customer.setId(1);
+		//customer.setId(1);
 		customer.setUserName("Mekus");
 		
 		Transaction t1 = new Transaction();
@@ -82,14 +82,14 @@ class TransactionServiceTest {
 		t1.setAmountPaid(60);
 		t1.setAmountUnpaid(40);
 		t1.setTransactionDate("2020/03/04");
-		t1.setId(1);
+		//t1.setId(1);
 		
 		Transaction t2 = new Transaction();
 		t2.setTotalAmount(200);
 		t2.setAmountPaid(120);
 		t2.setAmountUnpaid(80);
 		t2.setTransactionDate("2020/03/05");
-		t2.setId(2);
+		//t2.setId(2);
 		
 		transactions = new ArrayList<Transaction>();
 		transactions.add(t1);

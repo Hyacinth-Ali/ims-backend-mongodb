@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "addresses")
 public class Address {
 	@Id
-	private long id;
 	private String addressId;
 	private String city;
 	private String country;
@@ -16,14 +15,6 @@ public class Address {
 	private String type;
 	@DBRef
 	private Employee employee;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public String getAddressId() {
 		return addressId;

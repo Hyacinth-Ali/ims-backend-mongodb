@@ -9,18 +9,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "employees")
 public class Employee {
-	@Id
-	private long id;
+	
 	private String password;
 	private boolean manager;
-	@Indexed(unique = true)
 	private String firstName;
 	private String lastName;
+	//TODO: not working here, done in the mongo shell
+	// db.collection.createIndex("email": 1}, {unique: 1})
 	@Indexed(unique = true)
 	private String email;
 	@Indexed(unique = true)
 	private String userName;
 	private String encryptedPassword;
+	@Id
 	private String employeeId;
 	// this takes a number of parameters.
 	//@DBRef(db = <name_of_external_databse>)
@@ -30,14 +31,6 @@ public class Employee {
 	private Set<Transaction> sales;
 	@DBRef
 	private Set<Address> addresss;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public String getPassword() {
 		return password;
