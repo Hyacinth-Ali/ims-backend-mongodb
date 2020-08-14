@@ -91,7 +91,7 @@ public class CustomerController {
 		return returnValue;
 	}
 
-	// http://localhost:8080/customers/:employeeId/:userName
+	// http://localhost:8080/customers/:employeeId
 	@GetMapping(path = "/get/{employeeId}",produces = { MediaType.APPLICATION_JSON_VALUE })
 	public CustomerRest customerLogin(@PathVariable String employeeId, @RequestBody CustomerRequestDetails customerRequestDeatils) {
 		
