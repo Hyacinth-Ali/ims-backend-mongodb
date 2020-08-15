@@ -8,7 +8,6 @@ public class CustomerDTO {
 	private String lastName;
 	private String userName;
 	private String phoneNumber;
-	private long id;
 	private List<TransactionDTO> transactions;
 
 	public String getFirstName() {
@@ -33,14 +32,6 @@ public class CustomerDTO {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	public List<TransactionDTO> getTransactions() {

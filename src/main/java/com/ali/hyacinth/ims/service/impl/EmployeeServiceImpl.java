@@ -25,7 +25,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	Utils utils;
-	
+
 	@Autowired
 	EmployeeRepository employeeRepository;
 
@@ -33,14 +33,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 	 * Create an object of an employee when the person does not exist.
 	 * 
 	 * @param EmployeeDTO the details of the new employee
-	 * @param person     to be associated with the manager.
+	 * @param person      to be associated with the manager.
 	 * @throws InvalidInputException
 	 */
 	@Override
 	public void createEmployee(EmployeeDTO employeeDTO) {
-		
+
 		String error = "";
-		
+
 		if (employeeRepository.findByEmail(employeeDTO.getEmail()) != null) {
 			error = "The email already exist.";
 		} else if (employeeRepository.findByUserName(employeeDTO.getUserName()) != null) {
@@ -55,96 +55,98 @@ public class EmployeeServiceImpl implements EmployeeService {
 			error = "The user name cannot be empty.";
 		} else if (employeeDTO.getEmail() == null || employeeDTO.getEmail().length() == 0) {
 			error = "The email cannot be empty.";
-		} 
+		}
 		if (error.length() > 0) {
 			throw new InvalidInputException(error);
 		}
 
 		ModelMapper modelMapper = new ModelMapper();
-		
+
 		Employee employee = modelMapper.map(employeeDTO, Employee.class);
-		
-		//employee.setManager(false);
+
+		employee.setManager(true);
 		String publicUserId = utils.generateEmployeeId(30);
 		employee.setEmployeeId(publicUserId);
 		employee.setEncryptedPassword("testpassword");
-		employee.setManager(false);
-		
+
 		try {
 			employeeRepository.save(employee);
 		} catch (Exception e) {
-			throw new InvalidInputException("Error! Please check your details");
+			throw new InvalidInputException(e.getMessage());
+			// "Error! Pleae check your details"
 		}
 
 	}
 
-	
 	/**
 	 * Retrieve a given employee with his public id
+	 * 
 	 * @param userName user name of the employee
-	 * @param password 
+	 * @param password
 	 * @return the employee
 	 */
 	@Override
 	public EmployeeDTO getEmployeeByUserName(String userName, String password) {
-		
+
 		String error = "";
 		if (userName == null || userName.length() == 0) {
 			error = "Please enter your user name or email address.";
 		} else if (password == null || password.length() == 0) {
 			error = "Please enter your password.";
 		}
-		
+
 		if (error.length() > 0) {
 			throw new InvalidInputException(error);
 		}
-		
+
 		EmployeeDTO returnValue = new EmployeeDTO();
 		Employee employee = employeeRepository.findByUserName(userName);
 		if (employee == null) {
 			throw new InvalidInputException("The user name is incorrect, try again!");
 		}
-		
+
 		if (!employee.getPassword().equals(password)) {
 			throw new InvalidInputException("Incorrect password, try again!");
 		}
-		
+
 		BeanUtils.copyProperties(employee, returnValue);
-		
+
 		ImsBackendApplication.addCurrentEmployee(employee);
-		
+
 		return returnValue;
 	}
-	
+
 	/**
 	 * Removes current employee
 	 */
 	public void logout(String userName) {
-		
+
 		ImsBackendApplication.removeCurrentEmployee(userName);
 	}
+
 	/**
 	 * Retrieve a given employee with his email
-	 * @param password 
+	 * 
+	 * @param password
 	 * @param userName user name of the employee
 	 * 
 	 * @return the employee
 	 */
 	@Override
 	public EmployeeDTO getEmployeeByEmail(String email, String password) {
-		
+
 		String error = "";
-		
+
 		if (email == null || email.length() == 0) {
 			error = "Please enter your user name or email address";
 		} else if (password == null || password.length() == 0) {
 			error = "Please enter your password.";
 		}
-		
+
 		if (error.length() > 0) {
 			throw new InvalidInputException(error);
 		}
-		
+
 		EmployeeDTO returnValue = new EmployeeDTO();
 		Employee employee = employeeRepository.findByEmail(email);
 		if (employee == null) {
@@ -153,33 +155,30 @@ public class EmployeeServiceImpl implements EmployeeService {
 		if (!employee.getPassword().equals(password)) {
 			throw new InvalidInputException("Incorrect password, try again!");
 		}
-		
+
 		ImsBackendApplication.addCurrentEmployee(employee);
-		
+
 		BeanUtils.copyProperties(employee, returnValue);
-		
+
 		return returnValue;
 	}
-	
+
 	@Transactional
 	@Override
 	public void deleteEmployee(String employeeId) {
-		
+
 		Employee employee = employeeRepository.findByEmployeeId(employeeId);
-		
+
 		if (employee == null) {
 			throw new InvalidInputException("The employee doesn't exist");
 		}
-		
-		
+
 		try {
 			employeeRepository.delete(employee);
 		} catch (Exception e) {
 			throw new InvalidInputException("Error! Something went wrong. Check your details and try again");
 		}
-		
-		
-		
+
 	}
 
 	/**
@@ -188,7 +187,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public void updateEmployee(String id, EmployeeDTO employeeDTO) throws InvalidInputException {
 		String error = "";
-		
+
 		if (employeeDTO.getFirstName() == null || employeeDTO.getFirstName().length() == 0) {
 			error = "The first name cannot be empty.";
 		} else if (employeeDTO.getLastName() == null || employeeDTO.getLastName().length() == 0) {
@@ -199,46 +198,45 @@ public class EmployeeServiceImpl implements EmployeeService {
 			error = "The user name cannot be empty.";
 		} else if (employeeDTO.getEmail() == null || employeeDTO.getEmail().length() == 0) {
 			error = "The email cannot be empty.";
-		} 
+		}
 		if (error.length() > 0) {
 			throw new InvalidInputException(error);
 		}
-		
+
 		Employee employee = employeeRepository.findByUserName(employeeDTO.getUserName());
 		Employee employeeById = employeeRepository.findByEmployeeId(id);
-		
+
 		if (employee == null) {
 			throw new InvalidInputException("The user name is incorrect.");
 		}
-		
+
 		if (employeeById == null) {
 			throw new InvalidInputException("Access Denied!");
 		} else if (!employeeById.getUserName().equals(employee.getUserName())) {
 			throw new InvalidInputException("Access Denied!");
 		}
-		
+
 		if (!employee.getPassword().equals(employeeDTO.getPassword())) {
 			error = "The password is incorrect";
-		} 
-		
+		}
+
 		if (error.length() > 0) {
 			throw new InvalidInputException(error);
 		}
-		
-		
+
 		employee.setFirstName(employeeDTO.getFirstName());
 		employee.setLastName(employeeDTO.getLastName());
 		employee.setPassword(employeeDTO.getPassword());
 		employee.setEmail(employeeDTO.getEmail());
-		//cannot update user name for now
-		//employee.setUserName(employeeDTO.getUserName());
-		
+		// cannot update user name for now
+		// employee.setUserName(employeeDTO.getUserName());
+
 		try {
 			employeeRepository.save(employee);
 		} catch (Exception e) {
 			throw new InvalidInputException("Error! Seems the email already exist");
 		}
-		
+
 	}
 
 	/**
@@ -248,17 +246,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<EmployeeDTO> getEmployees() {
 		ArrayList<EmployeeDTO> returnValue = new ArrayList<EmployeeDTO>();
 		ModelMapper modelMapper = new ModelMapper();
-		
+
 		for (Employee employee : employeeRepository.findAll()) {
 			returnValue.add(modelMapper.map(employee, EmployeeDTO.class));
-			
+
 		}
 		return returnValue;
 	}
-	
+
 	@Override
 	public List<EmployeeDTO> getEmployees(int page, int limit) {
-		
+
 		if (page > 0) {
 			page = page - 1;
 		}
@@ -267,11 +265,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 
 		List<EmployeeDTO> returnValue = new ArrayList<>();
-		
+
 		Pageable pageableRequest = PageRequest.of(page, limit);
 		Page<Employee> employeePage = employeeRepository.findAll(pageableRequest);
 		List<Employee> employees = employeePage.getContent();
-		
+
 		for (Employee employee : employees) {
 			EmployeeDTO employeeDTO = new EmployeeDTO();
 			BeanUtils.copyProperties(employee, employeeDTO);
@@ -280,12 +278,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return returnValue;
 	}
 
-
 	@Override
 	public List<EmployeeDTO> getManagers() {
 		ArrayList<EmployeeDTO> returnValue = new ArrayList<EmployeeDTO>();
 		ModelMapper modelMapper = new ModelMapper();
-		
+
 		for (Employee employee : employeeRepository.findAll()) {
 			if (employee.isManager()) {
 				returnValue.add(modelMapper.map(employee, EmployeeDTO.class));
@@ -293,7 +290,5 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 		return returnValue;
 	}
-
-
 
 }

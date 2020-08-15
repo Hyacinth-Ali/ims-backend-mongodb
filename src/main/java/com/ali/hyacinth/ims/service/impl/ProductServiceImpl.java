@@ -80,7 +80,9 @@ public class ProductServiceImpl implements ProductService{
 		try {
 			productRepository.save(newProduct);
 		} catch (Exception e) {
-			throw new InvalidInputException("Error!, seems the name already exist");
+			//TODO: fine-tune the response
+			throw new InvalidInputException(e.getMessage());
+			//"Error!, seems the name already exist"
 		}
 		
 		
@@ -120,9 +122,10 @@ public class ProductServiceImpl implements ProductService{
 		if (product == null) {
 			throw new InvalidInputException("The product does not exist.");
 		}
-		
-		if (product.getProductTransactions().size() > 0) {
-			throw new InvalidInputException("This product is used in a transaction, Not Deleted!cannot be deleted!");
+		if (product.getProductTransactions() != null) {
+			if (product.getProductTransactions().size() > 0) {
+				throw new InvalidInputException("This product is used in a transaction, Not Deleted!cannot be deleted!");
+			}
 		}
 		productRepository.delete(product);
 		
