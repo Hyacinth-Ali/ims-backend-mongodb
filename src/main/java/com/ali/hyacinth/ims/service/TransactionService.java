@@ -1,10 +1,13 @@
 package com.ali.hyacinth.ims.service;
 
+import org.springframework.stereotype.Service;
+
 import com.ali.hyacinth.ims.exceptions.InvalidInputException;
 import com.ali.hyacinth.ims.shared.dto.ProductTransactionDTO;
 import com.ali.hyacinth.ims.shared.dto.TransactionDTO;
 import com.ali.hyacinth.ims.shared.dto.TransactionDetail;
 
+@Service
 public interface TransactionService {
 	
 	

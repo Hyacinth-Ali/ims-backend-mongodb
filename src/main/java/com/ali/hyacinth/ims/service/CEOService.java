@@ -1,11 +1,11 @@
 package com.ali.hyacinth.ims.service;
 
-import java.util.List;
+import org.springframework.stereotype.Service;
 
 import com.ali.hyacinth.ims.exceptions.InvalidInputException;
 import com.ali.hyacinth.ims.shared.dto.CEODTO;
-import com.ali.hyacinth.ims.shared.dto.EmployeeDTO;
 
+@Service
 public interface CEOService {
 	
 	CEODTO createCEO(CEODTO CEODTO) throws InvalidInputException;
