@@ -3,10 +3,13 @@ package com.ali.hyacinth.ims.service;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.ali.hyacinth.ims.exceptions.InvalidInputException;
 import com.ali.hyacinth.ims.shared.dto.CustomerDTO;
 import com.ali.hyacinth.ims.shared.dto.TransactionDTO;
 
+@Service
 public interface CustomerService {
 	
 	List<TransactionDTO> getCustomerTransactions(String userName);
