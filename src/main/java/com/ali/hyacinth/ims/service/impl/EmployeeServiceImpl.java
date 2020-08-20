@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -36,6 +37,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 	
 	@Autowired
 	TransactionRepository transactionRepository;
+	
+	@Autowired
+	MongoTemplate mongoTemplate;
 
 	/**
 	 * Create an instance of an employee.
@@ -180,17 +184,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 		
 		//TODO: delete the referenced employee
-		List<Transaction> transactions = transactionRepository.findAllBySeller(employee);
-//		transactions.forEach(transaction -> {
-//			Query query = new Query();
-//			query.addCriteria(Criteria.where("seller").is("xxx.xxx@xxx.com"));
-//			Update update = new Update();
-//			update.unset("activationToken");
-//
-//			// run update operation
-//			transactionRepository.
-//			mongoTemplate.updateMulti(transactionRepository.findAllBySeller(employee), update, Transaction.class);
-//		});
+		Query query = new Query();
+		query.addCriteria(Criteria.where("buyer").is(employee.getEmployeeId()));
+		Update update = new Update();
+		update.unset("seller");
 
 		try {
 			employeeRepository.delete(employee);
