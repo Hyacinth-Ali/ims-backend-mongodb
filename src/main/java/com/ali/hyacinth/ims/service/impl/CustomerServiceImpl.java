@@ -3,6 +3,7 @@ package com.ali.hyacinth.ims.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -10,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +45,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	Utils utils;
+	
+	@Autowired
+	MongoTemplate mongoTemplate;
 
 	/**
 	 * Retrieves all transactions linked to a customer
@@ -244,6 +252,42 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 		
 		//TODO: delete the referenced value in transactions
+//		Set<Transaction> transactions = customer.getPurchases();
+//		if (transactions != null) {
+//			for (Transaction transaction : transactions) {
+//				String id = transaction.getTransactionId();
+//				Query query = new Query();
+//				query.addCriteria(Criteria.where("totalAmount").is(0));
+//				List<Transaction> ts = mongoTemplate.find(query, Transaction.class);
+//				System.out.println(query.toString());
+//				Update update = new Update().unset(id);
+//				update.unset("buyer");
+//
+//				// run update operation
+//				mongoTemplate.updateMulti(query, update, Transaction.class);
+//			}
+//			try {
+//				transactionRepository.saveAll(customer.getPurchases());
+//			} catch (Exception e) {
+//				throw new InvalidInputException(e.getMessage());
+//			}
+//		}
+//		
+		
+		Query query = new Query();
+		query.addCriteria(Criteria.where("totalAmount").is(0));
+		List<Transaction> ts = mongoTemplate.find(query, Transaction.class);
+		Update update = new Update();
+		update.unset("buyer");
+
+		// run update operation
+		mongoTemplate.updateMulti(query, update, Transaction.class);
+//		try {
+//			transactionRepository.saveAll(ts);
+//		} catch (Exception e) {
+//			throw new InvalidInputException(e.getMessage());
+//		}
+		
 
 		try {
 			customerRepository.delete(customer);
