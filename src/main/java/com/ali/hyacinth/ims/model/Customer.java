@@ -14,6 +14,7 @@ public class Customer {
 	private String firstName;
 	private String lastName;
 	//TODO: This doesn't work.
+	//it works with mongodb atlass
 	@Indexed(unique = true)
 	private String userName;
 	@DBRef

@@ -119,6 +119,8 @@ public class ProductServiceImpl implements ProductService{
 		
 		Product product = productRepository.findByName(name);
 		
+		//TODO: delete referenced value in product transaction
+		
 		if (product == null) {
 			throw new InvalidInputException("The product does not exist.");
 		}

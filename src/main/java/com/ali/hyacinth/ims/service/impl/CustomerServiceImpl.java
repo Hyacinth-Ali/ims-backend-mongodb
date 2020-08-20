@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ali.hyacinth.ims.ImsBackendApplication;
 import com.ali.hyacinth.ims.exceptions.InvalidInputException;
-import com.ali.hyacinth.ims.model.Address;
 import com.ali.hyacinth.ims.model.Customer;
 import com.ali.hyacinth.ims.model.Employee;
 import com.ali.hyacinth.ims.model.Transaction;
@@ -24,9 +23,7 @@ import com.ali.hyacinth.ims.repository.EmployeeRepository;
 import com.ali.hyacinth.ims.repository.TransactionRepository;
 import com.ali.hyacinth.ims.service.CustomerService;
 import com.ali.hyacinth.ims.shared.Utils;
-import com.ali.hyacinth.ims.shared.dto.AddressDTO;
 import com.ali.hyacinth.ims.shared.dto.CustomerDTO;
-import com.ali.hyacinth.ims.shared.dto.EmployeeDTO;
 import com.ali.hyacinth.ims.shared.dto.TransactionDTO;
 
 @Service
@@ -81,11 +78,10 @@ public class CustomerServiceImpl implements CustomerService {
 	public void createCustomer(CustomerDTO customerDto, String employeeId) throws InvalidInputException {
 
 		if (!isManagerLoggedIn(employeeId)) {
-			throw new InvalidInputException("A manager is required.");
+			throw new InvalidInputException("A manager is required to create a customer.");
 		}
 
 		String error = "";
-
 		if (customerRepository.findByUserName(customerDto.getUserName()) != null) {
 			error = "The user name already exist.";
 		} else if (customerDto.getUserName() == null || customerDto.getUserName().length() == 0) {
@@ -239,14 +235,15 @@ public class CustomerServiceImpl implements CustomerService {
 	public void deleteCustomer(String userName, String employeeId) {
 
 		if (!isManagerLoggedIn(employeeId)) {
-			throw new InvalidInputException("A manager is required.");
+			throw new InvalidInputException("A manager is required to delete a customer.");
 		}
-
 		Customer customer = customerRepository.findByUserName(userName);
 
 		if (customer == null) {
 			throw new InvalidInputException("Customer doesn't exist");
 		}
+		
+		//TODO: delete the referenced value in transactions
 
 		try {
 			customerRepository.delete(customer);
@@ -256,7 +253,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	/**
-	 * TODO: To fully implemented and then used
+	 * TODO: To be fully implemented and then used
 	 */
 	@Override
 	public List<CustomerDTO> getCustomers(int page, int limit) {
@@ -312,7 +309,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public CustomerDTO customerLogin(String userName, String employeeId) throws InvalidInputException {
 
 		if(!isManagerLoggedIn(employeeId)) {
-			throw new InvalidInputException("A manager is required to register a customer.");
+			throw new InvalidInputException("A manager is required to log in a customer.");
 		}
 		
 		Customer customer = customerRepository.findByUserName(userName);
