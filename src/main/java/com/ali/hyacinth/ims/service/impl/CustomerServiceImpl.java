@@ -3,6 +3,7 @@ package com.ali.hyacinth.ims.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -10,12 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ali.hyacinth.ims.ImsBackendApplication;
 import com.ali.hyacinth.ims.exceptions.InvalidInputException;
-import com.ali.hyacinth.ims.model.Address;
 import com.ali.hyacinth.ims.model.Customer;
 import com.ali.hyacinth.ims.model.Employee;
 import com.ali.hyacinth.ims.model.Transaction;
@@ -24,9 +28,7 @@ import com.ali.hyacinth.ims.repository.EmployeeRepository;
 import com.ali.hyacinth.ims.repository.TransactionRepository;
 import com.ali.hyacinth.ims.service.CustomerService;
 import com.ali.hyacinth.ims.shared.Utils;
-import com.ali.hyacinth.ims.shared.dto.AddressDTO;
 import com.ali.hyacinth.ims.shared.dto.CustomerDTO;
-import com.ali.hyacinth.ims.shared.dto.EmployeeDTO;
 import com.ali.hyacinth.ims.shared.dto.TransactionDTO;
 
 @Service
@@ -43,6 +45,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	Utils utils;
+	
+	@Autowired
+	MongoTemplate mongoTemplate;
 
 	/**
 	 * Retrieves all transactions linked to a customer
@@ -81,11 +86,10 @@ public class CustomerServiceImpl implements CustomerService {
 	public void createCustomer(CustomerDTO customerDto, String employeeId) throws InvalidInputException {
 
 		if (!isManagerLoggedIn(employeeId)) {
-			throw new InvalidInputException("A manager is required.");
+			throw new InvalidInputException("A manager is required to create a customer.");
 		}
 
 		String error = "";
-
 		if (customerRepository.findByUserName(customerDto.getUserName()) != null) {
 			error = "The user name already exist.";
 		} else if (customerDto.getUserName() == null || customerDto.getUserName().length() == 0) {
@@ -239,24 +243,31 @@ public class CustomerServiceImpl implements CustomerService {
 	public void deleteCustomer(String userName, String employeeId) {
 
 		if (!isManagerLoggedIn(employeeId)) {
-			throw new InvalidInputException("A manager is required.");
+			throw new InvalidInputException("A manager is required to delete a customer.");
 		}
-
 		Customer customer = customerRepository.findByUserName(userName);
 
 		if (customer == null) {
 			throw new InvalidInputException("Customer doesn't exist");
 		}
 
+		Query query = new Query();
+		query.addCriteria(Criteria.where("buyer").is(customer.getCustomerId()));
+		Update update = new Update();
+		update.unset("buyer");
+
 		try {
 			customerRepository.delete(customer);
 		} catch (Exception e) {
 			throw new InvalidInputException(e.getMessage());
 		}
+		
+		// run update operation and saves the updated entity
+		mongoTemplate.updateMulti(query, update, Transaction.class);
 	}
 
 	/**
-	 * TODO: To fully implemented and then used
+	 * TODO: To be fully implemented and then used
 	 */
 	@Override
 	public List<CustomerDTO> getCustomers(int page, int limit) {
@@ -312,7 +323,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public CustomerDTO customerLogin(String userName, String employeeId) throws InvalidInputException {
 
 		if(!isManagerLoggedIn(employeeId)) {
-			throw new InvalidInputException("A manager is required to register a customer.");
+			throw new InvalidInputException("A manager is required to log in a customer.");
 		}
 		
 		Customer customer = customerRepository.findByUserName(userName);
