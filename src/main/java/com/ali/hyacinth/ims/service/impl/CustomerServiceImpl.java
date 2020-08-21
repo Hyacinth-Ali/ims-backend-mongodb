@@ -250,50 +250,20 @@ public class CustomerServiceImpl implements CustomerService {
 		if (customer == null) {
 			throw new InvalidInputException("Customer doesn't exist");
 		}
-		
-		//TODO: delete the referenced value in transactions
-//		Set<Transaction> transactions = customer.getPurchases();
-//		if (transactions != null) {
-//			for (Transaction transaction : transactions) {
-//				String id = transaction.getTransactionId();
-//				Query query = new Query();
-//				query.addCriteria(Criteria.where("totalAmount").is(0));
-//				List<Transaction> ts = mongoTemplate.find(query, Transaction.class);
-//				System.out.println(query.toString());
-//				Update update = new Update().unset(id);
-//				update.unset("buyer");
-//
-//				// run update operation
-//				mongoTemplate.updateMulti(query, update, Transaction.class);
-//			}
-//			try {
-//				transactionRepository.saveAll(customer.getPurchases());
-//			} catch (Exception e) {
-//				throw new InvalidInputException(e.getMessage());
-//			}
-//		}
-//		
-		
+
 		Query query = new Query();
-		query.addCriteria(Criteria.where("totalAmount").is(0));
-		List<Transaction> ts = mongoTemplate.find(query, Transaction.class);
+		query.addCriteria(Criteria.where("buyer").is(customer.getCustomerId()));
 		Update update = new Update();
 		update.unset("buyer");
-
-		// run update operation
-		mongoTemplate.updateMulti(query, update, Transaction.class);
-//		try {
-//			transactionRepository.saveAll(ts);
-//		} catch (Exception e) {
-//			throw new InvalidInputException(e.getMessage());
-//		}
-		
 
 		try {
 			customerRepository.delete(customer);
 		} catch (Exception e) {
 			throw new InvalidInputException(e.getMessage());
 		}
+		
+		// run update operation and saves the updated entity
+		mongoTemplate.updateMulti(query, update, Transaction.class);
 	}
 
 	/**

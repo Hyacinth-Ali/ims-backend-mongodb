@@ -15,7 +15,7 @@ public class Transaction {
 	private Employee seller;
 	@DBRef
 	private Customer buyer;
-//	@DBRef
+	@DBRef
 	private List<ProductTransaction> productTransactions;
 	private double amountUnpaid;
 	private String transactionDate;

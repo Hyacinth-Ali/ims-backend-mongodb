@@ -1,8 +1,5 @@
 package com.ali.hyacinth.ims.ui.request;
 
-import com.ali.hyacinth.ims.model.Customer;
-import com.ali.hyacinth.ims.model.Employee;
-
 public class TransactionRequestDetails {
 	
 	private String employeeUserName;

@@ -7,6 +7,9 @@ import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,6 +92,9 @@ public class TransactionServiceImpl implements TransactionService {
 		Transaction transaction = new Transaction();
 		transaction.setTransactionDate(date);
 		transaction.setBuyer(c);
+		transaction.setEditable(true);
+		String publicTransactionId = utils.generateEmployeeId(30);
+		transaction.setTransactionId(publicTransactionId);
 
 		// handle bidirectional references for customer
 		Set<Transaction> purchases = c.getPurchases();
@@ -107,10 +113,6 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 		sales.add(transaction);
 		e.setSales(sales);
-
-		transaction.setEditable(true);
-		String publicTransactionId = utils.generateEmployeeId(30);
-		transaction.setTransactionId(publicTransactionId);
 
 		try {
 			transactionRepository.save(transaction);
@@ -217,8 +219,6 @@ public class TransactionServiceImpl implements TransactionService {
 		product.setProductTransactions(pts);
 
 //		handle bidirectional reference wit Transaction
-//		List<ProductTransaction> productTransactions = productTransactionRepository
-//				.findAllByTransaction(currentTransaction);
 		List<ProductTransaction> productTransactions = currentTransaction.getProductTransactions();
 		if (productTransactions == null) {
 			productTransactions = new ArrayList<ProductTransaction>();
@@ -232,19 +232,8 @@ public class TransactionServiceImpl implements TransactionService {
 			throw new InvalidInputException("Error!, check your details and try again");
 		}
 
-		setTransactionTotalAmount(currentTransaction.getTransactionId());
-
-		try {
-			productRepository.save(product);
-		} catch (Exception e) {
-			throw new InvalidInputException("Error!, check your details and try again");
-		}
-
-		try {
-			transactionRepository.save(currentTransaction);
-		} catch (Exception e) {
-			throw new InvalidInputException("Error!, check your details and try again");
-		}
+		// set total transaction, then save the modified transaction, and then save modified product
+		setTransactionTotalAmount(currentTransaction, product);
 
 		ModelMapper modelMapper = new ModelMapper();
 		ProductTransactionDTO returnValue = modelMapper.map(productTransaction, ProductTransactionDTO.class);
@@ -253,28 +242,27 @@ public class TransactionServiceImpl implements TransactionService {
 
 	}
 
-	private void setTransactionTotalAmount(String transactionId) throws InvalidInputException {
-
-		Transaction currentTransaction = transactionRepository.findByTransactionId(transactionId);
+	private void setTransactionTotalAmount(Transaction currentTransaction, Product product) throws InvalidInputException {
 
 		float totalAmount = 0.0f;
-		if (currentTransaction != null) {
-			for (ProductTransaction productTransaction : productTransactionRepository
-					.findAllByTransaction(currentTransaction)) {
-				double amount = productTransaction.getPrice();
-				totalAmount += amount;
-			}
-		} else {
-			throw new InvalidInputException("There transaction does not exist.");
+		for (ProductTransaction productTransaction : currentTransaction.getProductTransactions()) {
+			double amount = productTransaction.getPrice();
+			totalAmount += amount;
 		}
 
 		currentTransaction.setTotalAmount(totalAmount);
 
-//		try {
-//			transactionRepository.save(currentTransaction);
-//		} catch (Exception e) {
-//			throw new InvalidInputException("Error!, check your details and try again");
-//		}
+		try {
+			transactionRepository.save(currentTransaction);
+		} catch (Exception e) {
+			throw new InvalidInputException("Error!, check your details and try again");
+		}
+		
+		try {
+			productRepository.save(product);
+		} catch (Exception e) {
+			throw new InvalidInputException("Error!, check your details and try again");
+		}
 
 	}
 
@@ -349,7 +337,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 		Transaction transaction = transactionRepository.findByTransactionId(transactionId);
 		Employee employee = employeeRepository.findByEmployeeId(employeeId);
-
+		
 		if (transaction == null) {
 			throw new InvalidInputException("The transaction doesn't exist");
 		} else if (employee == null) {
@@ -366,23 +354,35 @@ public class TransactionServiceImpl implements TransactionService {
 		if (id == null || id.length() == 0) {
 			throw new InvalidInputException("Employee must be logged in.");
 		}
+		
+		// TODO remove if no error
+//		Set<Transaction> employeeTransactions = employee.getSales();
+//		employeeTransactions.remove(transaction);
+//		employee.setSales(employeeTransactions);
+//		
+//		Customer customer = transaction.getBuyer();
+//		Set<Transaction> customerTransactions = customer.getPurchases();
+//		customerTransactions.remove(transaction);
+//		customer.setPurchases(customerTransactions);
 
 		List<ProductTransaction> containedPTransactions = transaction.getProductTransactions();
+		List<Product> products = new ArrayList<Product>();
 		if (containedPTransactions != null) {
-			try {
-				for (ProductTransaction productTransaction : containedPTransactions) {
-					Product p = productTransaction.getProduct();
-					p.setQuantity(p.getQuantity() + productTransaction.getQuantity());
-					p.getProductTransactions().remove(productTransaction);
-					productRepository.save(p);
-				}
-
-			} catch (RuntimeException e) {
-				throw new InvalidInputException(e.getMessage());
+			for (ProductTransaction productTransaction : containedPTransactions) {
+				Product p = productTransaction.getProduct();
+				p.setQuantity(p.getQuantity() + productTransaction.getQuantity());
+				p.getProductTransactions().remove(productTransaction);
+				products.add(p);
 			}
-			productTransactionRepository.deleteAll(containedPTransactions);
 		}
+		//save  modified products
+		productRepository.saveAll(products);
+		productTransactionRepository.deleteAll(containedPTransactions);
 		transactionRepository.delete(transaction);
+		
+		// remove if not error
+//		employeeRepository.save(employee);
+//		customerRepository.save(customer);
 
 	}
 
@@ -408,7 +408,7 @@ public class TransactionServiceImpl implements TransactionService {
 		return loggedIn;
 	}
 
-	// Not used for now TODO
+	// TODO: Not used for now 
 	@Override
 	public void clearTransactionProducts(String employeeId, String transactionId) throws InvalidInputException {
 
@@ -454,17 +454,17 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 
 		ProductTransaction pTransaction = null;
-		List<ProductTransaction> pTransactions = productTransactionRepository.findAllByProduct(product);
+		Set<ProductTransaction> pTransactions = product.getProductTransactions();
 		List<ProductTransaction> existingPTransactions = transaction.getProductTransactions();
-		for (ProductTransaction pt : pTransactions) {
-			System.out.println(pt.hashCode());
-			System.out.println(existingPTransactions.get(0).hashCode());
-			if (existingPTransactions.contains(pt)) {
-				pTransaction = pt;
-				break;
+		if (existingPTransactions != null) {
+			for (ProductTransaction pt : pTransactions) {
+				if (existingPTransactions.contains(pt)) {
+					pTransaction = pt;
+					break;
+				}
 			}
 		}
-
+		
 		if (pTransaction == null) {
 			throw new InvalidInputException("This item transaction doesn't exist");
 		}
@@ -477,25 +477,15 @@ public class TransactionServiceImpl implements TransactionService {
 		pTransaction.setQuantity(newQuantity);
 		pTransaction.setPrice(newQuantity * product.getItemPrice());
 		product.setQuantity(product.getQuantity() - differenceQuantity);
-		setTransactionTotalAmount(transactionId);
-		try {
-			transactionRepository.save(transaction);
-		} catch (Exception e) {
-			throw new InvalidInputException("Error!, The transaction was not saved.");
-		}
-
 		try {
 			productTransactionRepository.save(pTransaction);
 		} catch (Exception e) {
 			throw new InvalidInputException("Error!, The transaction was not saved.");
 		}
-
-		try {
-			productRepository.save(product);
-		} catch (Exception e) {
-			throw new InvalidInputException("Error!, The product was not saved.");
-		}
-
+		
+		// set total transaction, then save the modified transaction, and then save modified product
+		setTransactionTotalAmount(transaction, product);
+		
 	}
 
 	@Override
@@ -570,40 +560,27 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 
 		ProductTransaction deletetPTranaction = null;
-		for (ProductTransaction pTransaction : transaction.getProductTransactions()) {
-			if (pTransaction.getProduct().getName().equals(product.getName())) {
-				deletetPTranaction = pTransaction;
-				break;
+		if (transaction.getProductTransactions() != null) {
+			for (ProductTransaction pTransaction : transaction.getProductTransactions()) {
+				if (pTransaction.getProduct().getName().equals(product.getName())) {
+					deletetPTranaction = pTransaction;
+					break;
+				}
 			}
 		}
-
+		
 		if (deletetPTranaction == null) {
-			throw new InvalidInputException("The product is not in this tranaction");
+			throw new InvalidInputException("The product is not in this transaction");
 		}
 		int quantity = deletetPTranaction.getQuantity();
 		product.setQuantity(product.getQuantity() + quantity);
 		transaction.getProductTransactions().remove(deletetPTranaction);
 		product.getProductTransactions().remove(deletetPTranaction);
 		productTransactionRepository.delete(deletetPTranaction);
-		setTransactionTotalAmount(transactionId);
+		
+		// set total transaction, then save the modified transaction, and then save modified product
+		setTransactionTotalAmount(transaction, product);
 
-		for (ProductTransaction pTransaction : transaction.getProductTransactions()) {
-			if (pTransaction.getProduct().getName().equals(product.getName())) {
-				deletetPTranaction = pTransaction;
-				break;
-			}
-		}
-
-		try {
-			transactionRepository.save(transaction);
-		} catch (Exception e) {
-			throw new InvalidInputException("Error!, The transaction was not saved");
-		}
-		try {
-			productRepository.save(product);
-		} catch (Exception e) {
-			throw new InvalidInputException("Error!, The product was not saved");
-		}
 	}
 
 }

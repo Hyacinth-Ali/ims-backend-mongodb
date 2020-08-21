@@ -183,9 +183,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 			throw new InvalidInputException("The employee doesn't exist");
 		}
 		
-		//TODO: delete the referenced employee
 		Query query = new Query();
-		query.addCriteria(Criteria.where("buyer").is(employee.getEmployeeId()));
+		query.addCriteria(Criteria.where("seller").is(employee.getEmployeeId()));
 		Update update = new Update();
 		update.unset("seller");
 
@@ -194,6 +193,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 		} catch (Exception e) {
 			throw new InvalidInputException("Error! Something went wrong. Check your details and try again");
 		}
+		
+		mongoTemplate.updateMulti(query, update, Transaction.class);
 
 	}
 
