@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,9 @@ public class ProductServiceImpl implements ProductService{
 	
 	@Autowired
 	Utils utils;
+	
+	@Autowired
+	MongoTemplate mongoTemplate;
 
 	@Override
 	public void callCreateProduct() throws InvalidInputException {
@@ -81,8 +85,7 @@ public class ProductServiceImpl implements ProductService{
 			productRepository.save(newProduct);
 		} catch (Exception e) {
 			//TODO: fine-tune the response
-			throw new InvalidInputException(e.getMessage());
-			//"Error!, seems the name already exist"
+			throw new InvalidInputException("Error!, seems the name already exist");
 		}
 		
 		
@@ -112,23 +115,21 @@ public class ProductServiceImpl implements ProductService{
 		} else if (!employee.isManager()) {
 			error = "A manager is required to delete a product.";
 		}
-		
 		if (error.length() > 0) {
 			throw new InvalidInputException(error);
 		}
 		
 		Product product = productRepository.findByName(name);
-		
 		if (product == null) {
 			throw new InvalidInputException("The product does not exist.");
 		}
-		if (product.getProductTransactions() != null) {
-			if (product.getProductTransactions().size() > 0) {
-				throw new InvalidInputException("This product is used in a transaction, Not Deleted!cannot be deleted!");
-			}
+		
+		//No need to updated corresponding product since a product used
+		// in a transaction cannot be deleted
+		if (product.getProductTransactions() != null && product.getProductTransactions().size() > 0) {
+			throw new InvalidInputException("This product is used in a transaction, cannot be Deleted!");
 		}
 		productRepository.delete(product);
-		
 	}
 
 	/**

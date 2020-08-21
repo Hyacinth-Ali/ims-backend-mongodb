@@ -9,13 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ali.hyacinth.ims.ImsBackendApplication;
 import com.ali.hyacinth.ims.exceptions.InvalidInputException;
 import com.ali.hyacinth.ims.model.Employee;
+import com.ali.hyacinth.ims.model.Transaction;
 import com.ali.hyacinth.ims.repository.EmployeeRepository;
+import com.ali.hyacinth.ims.repository.TransactionRepository;
 import com.ali.hyacinth.ims.service.EmployeeService;
 import com.ali.hyacinth.ims.shared.Utils;
 import com.ali.hyacinth.ims.shared.dto.EmployeeDTO;
@@ -28,9 +34,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	EmployeeRepository employeeRepository;
+	
+	@Autowired
+	TransactionRepository transactionRepository;
+	
+	@Autowired
+	MongoTemplate mongoTemplate;
 
 	/**
-	 * Create an object of an employee when the person does not exist.
+	 * Create an instance of an employee.
 	 * 
 	 * @param EmployeeDTO the details of the new employee
 	 * @param person      to be associated with the manager.
@@ -72,10 +84,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 		try {
 			employeeRepository.save(employee);
 		} catch (Exception e) {
-			throw new InvalidInputException(e.getMessage());
-			// "Error! Pleae check your details"
+			throw new InvalidInputException("Error! Pleae check your details");
 		}
-
 	}
 
 	/**
@@ -172,12 +182,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 		if (employee == null) {
 			throw new InvalidInputException("The employee doesn't exist");
 		}
+		
+		Query query = new Query();
+		query.addCriteria(Criteria.where("seller").is(employee.getEmployeeId()));
+		Update update = new Update();
+		update.unset("seller");
 
 		try {
 			employeeRepository.delete(employee);
 		} catch (Exception e) {
 			throw new InvalidInputException("Error! Something went wrong. Check your details and try again");
 		}
+		
+		mongoTemplate.updateMulti(query, update, Transaction.class);
 
 	}
 

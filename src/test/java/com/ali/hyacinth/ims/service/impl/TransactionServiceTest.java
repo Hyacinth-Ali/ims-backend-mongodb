@@ -1,22 +1,15 @@
 package com.ali.hyacinth.ims.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ali.hyacinth.ims.ImsBackendApplication;
-import com.ali.hyacinth.ims.exceptions.InvalidInputException;
 import com.ali.hyacinth.ims.model.Customer;
 import com.ali.hyacinth.ims.model.Employee;
 import com.ali.hyacinth.ims.model.Transaction;
@@ -25,7 +18,6 @@ import com.ali.hyacinth.ims.repository.EmployeeRepository;
 import com.ali.hyacinth.ims.repository.ProductRepository;
 import com.ali.hyacinth.ims.repository.ProductTransactionRepository;
 import com.ali.hyacinth.ims.repository.TransactionRepository;
-import com.ali.hyacinth.ims.shared.dto.TransactionDTO;
 
 class TransactionServiceTest {
 	

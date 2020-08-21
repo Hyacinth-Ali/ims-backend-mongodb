@@ -15,7 +15,7 @@ public class Employee {
 	private String firstName;
 	private String lastName;
 	//TODO: not working here, done in the mongo shell
-	// db.collection.createIndex("email": 1}, {unique: 1})
+	// db.collection.createIndex("email": 1}, {unique: 1}): command for creating index
 	@Indexed(unique = true)
 	private String email;
 	@Indexed(unique = true)
