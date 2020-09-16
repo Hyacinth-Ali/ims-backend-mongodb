@@ -13,7 +13,7 @@ public class Address {
 	private String streetName;
 	private String postalCode;
 	private String type;
-	@DBRef
+	@DBRef(lazy = true)
 	private Employee employee;
 
 	public String getAddressId() {

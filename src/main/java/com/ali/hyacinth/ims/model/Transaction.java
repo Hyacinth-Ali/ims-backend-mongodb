@@ -11,11 +11,11 @@ public class Transaction {
 	private boolean editable;
 	private double totalAmount;
 	private double amountPaid;
-	@DBRef
+	@DBRef(lazy = true)
 	private Employee seller;
-	@DBRef
+	@DBRef(lazy = true)
 	private Customer buyer;
-	@DBRef
+	@DBRef(lazy = true)
 	private List<ProductTransaction> productTransactions;
 	private double amountUnpaid;
 	private String transactionDate;
