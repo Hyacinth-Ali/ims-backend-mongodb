@@ -7,9 +7,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "productTransactions")
 public class ProductTransaction {
 	private double price;
-	@DBRef
+	@DBRef(lazy = true)
 	private Product product;
-	@DBRef
+	@DBRef(lazy = true)
 	private Transaction transaction;
 	@Id
 	private String pTransactionId;
