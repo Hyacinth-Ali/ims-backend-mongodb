@@ -15,7 +15,7 @@ public class Product {
 	private String name;
 	@Id
 	private String productId;
-	@DBRef
+	@DBRef(lazy = true)
 	private Set<ProductTransaction> productTransactions;
 
 	public double getItemPrice() {

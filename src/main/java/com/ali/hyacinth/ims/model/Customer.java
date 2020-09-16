@@ -17,7 +17,7 @@ public class Customer {
 	//it works with mongodb atlass
 	@Indexed(unique = true)
 	private String userName;
-	@DBRef
+	@DBRef(lazy = true)
 	private Set<Transaction> purchases;
 	@Id
 	private String customerId;

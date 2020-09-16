@@ -27,9 +27,9 @@ public class Employee {
 	//@DBRef(db = <name_of_external_databse>)
 	//@DBRef(lazy = false>) is default. This means that the referenced is loaded 
 	//when referencing object is retrieved from database
-	@DBRef()
+	@DBRef(lazy = true)
 	private Set<Transaction> sales;
-	@DBRef
+	@DBRef(lazy = true)
 	private Set<Address> addresss;
 
 	public String getPassword() {
