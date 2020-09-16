@@ -1,8 +1,5 @@
 package com.ali.hyacinth.ims.ui.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +20,7 @@ import com.ali.hyacinth.ims.ui.request.TransactionRequestDetails;
 
 @RestController
 @RequestMapping("transactions") // http://localhost:8080/transactions
-public class Transactioncontroller {
+public class TransactionController {
 
 	@Autowired
 	TransactionService transactionService;
