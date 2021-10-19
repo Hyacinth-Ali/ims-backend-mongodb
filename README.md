@@ -1,3 +1,3 @@
 # ims-backend-mongodb
 
-This application uses MongoDB with Spring Boot framework to manage inventories.
+This is a backend application which uses MongoDB with Spring Boot framework to manage motorcycle parts inventories. This is a personal project which targets a specific motorcycle parts store.
