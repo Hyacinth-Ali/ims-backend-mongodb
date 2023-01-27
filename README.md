@@ -7,3 +7,5 @@ This project follows MVC pattern, i.e., Model View Controller pattern, to design
 
 
 ![IMS Architecture](https://user-images.githubusercontent.com/24963911/215000532-7f4111ae-b0a3-4206-9a39-b66488a0f3ab.png)
+
+The dotted arrows represent dependencies between components (unless specified otherwise on the arrow).
